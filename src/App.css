@@ -1,0 +1,10 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: auto;
+  text-align: center;
+}
+
+div {
+  border: 1px solid orangered;
+}
