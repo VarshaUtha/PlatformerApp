@@ -1,7 +1,6 @@
-import { Scene } from 'phaser';
 import './App.css'
 import PhaserGame from './canvasBoard';
-import Lvl1 from './scene';
+import Sprites from './sprite';
 
 function App() {
 
