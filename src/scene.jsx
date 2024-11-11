@@ -39,10 +39,6 @@ class Lvl1 extends Phaser.Scene {
     }
     
   }
-  getPlatforms() {
-    return this.Platforms;
-  }
-  
 };
 
 export default Lvl1;
