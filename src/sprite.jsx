@@ -65,7 +65,6 @@ class Sprites extends Phaser.Scene {
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.player.body.setGravityY(400);
-
   }
 
   update() {
@@ -80,7 +79,7 @@ class Sprites extends Phaser.Scene {
     } else {
       this.player.setVelocityX(0);
       this.player.anims.play("idle", true);
-    }
+    };
 
     if(this.cursors.up.isDown){
       this.player.setVelocityY(-300);
