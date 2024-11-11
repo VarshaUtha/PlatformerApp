@@ -13,7 +13,7 @@ class Sprites extends Phaser.Scene {
       frameWidth: 150,
       frameHeight: 150,
     });
-    this.load.spritesheet("dudeRun", "src/assets/sprites/playableRun.png", {
+    this.load.spritesheet("dudeRun", "src/assets/sprites/playableRun.PNG", {
       frameWidth: 150,
       frameHeight: 150,
     });
@@ -49,16 +49,17 @@ class Sprites extends Phaser.Scene {
     });
     this.anims.create({
       key: "jump",
-      frame: [{key: "dudeJump", frame: 0}],
+      frames: [{key: "dudeJump", frame: 0}],
       frameRate: 20
     });
     this.anims.create({
       key: "fall",
-      frame: [{key: "dudeJump", frame: 1}],
+      frames: [{key: "dudeJump", frame: 1}],
       frameRate: 20
     });
 
     this.cursors = this.input.keyboard.createCursorKeys();
+    this.player.body.setGravityY(400);
 
   }
 
@@ -76,6 +77,16 @@ class Sprites extends Phaser.Scene {
       this.player.anims.play("idle", true);
     }
 
+    if (this.cursors.up.isDown && this.cursors.right.isDown) {
+      this.player.setVelocityY(-300);
+      this.player.anims.play("jump");
+      this.player.flipX = false;
+    }else if (this.cursors.up.isDown && this.cursors.left.isDown){
+      this.player.setVelocity(-300);
+    }else if (this.cursors.down.isDown && this.cursors.left.isDown){
+      this.player.setVelocityY(300);
+      this.player.anims.play("fall");
+    }
   } 
 }
 export default Sprites;
