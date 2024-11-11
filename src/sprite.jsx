@@ -57,6 +57,11 @@ class Sprites extends Phaser.Scene {
       frames: [{key: "dudeJump", frame: 1}],
       frameRate: 20
     });
+    this.anims.create({
+      key: "jumpOnly",
+      frames: [{key: "dudeJump", frame: 2}],
+      frameRate: 20
+    });
 
     this.cursors = this.input.keyboard.createCursorKeys();
     this.player.body.setGravityY(400);
@@ -77,15 +82,27 @@ class Sprites extends Phaser.Scene {
       this.player.anims.play("idle", true);
     }
 
-    if (this.cursors.up.isDown && this.cursors.right.isDown) {
+    if(this.cursors.up.isDown){
+      this.player.setVelocityY(-300);
+      this.player.anims.play("jumpOnly");
+    }
+
+     if (this.cursors.up.isDown && this.cursors.right.isDown) {
       this.player.setVelocityY(-300);
       this.player.anims.play("jump");
       this.player.flipX = false;
     }else if (this.cursors.up.isDown && this.cursors.left.isDown){
       this.player.setVelocity(-300);
+      this.player.anims.play("jump");
+      this.player.flipX = true;
+    }else if(this.cursors.down.isDown && this.cursors.right.isDown){
+      this.player.setVelocityY(300);
+      this.player.anims.play("fall");
+      this.player.flipX = false;
     }else if (this.cursors.down.isDown && this.cursors.left.isDown){
       this.player.setVelocityY(300);
       this.player.anims.play("fall");
+      this.player.flipX = true;
     }
   } 
 }
