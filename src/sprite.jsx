@@ -63,16 +63,21 @@ class Sprites extends Phaser.Scene {
       frameRate: 20
     });
 
-    this.cursors = this.input.keyboard.createCursorKeys();
     this.player.body.setGravityY(400);
+
+    this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
+
   }
 
   update() {
-    if (this.cursors.left.isDown) {
+    if (this.keyA.isDown) {
       this.player.setVelocityX(-180);
       this.player.anims.play("runLeft", true);
       this.player.flipX = false;
-    } else if (this.cursors.right.isDown) {
+    } else if (this.keyD.isDown) {
       this.player.setVelocityX(180);
       this.player.anims.play("runRight", true);
       this.player.flipX = true;
@@ -81,24 +86,24 @@ class Sprites extends Phaser.Scene {
       this.player.anims.play("idle", true);
     };
 
-    if(this.cursors.up.isDown){
+    if(this.keyW.isDown){
       this.player.setVelocityY(-300);
       this.player.anims.play("jumpOnly");
     }
 
-     if (this.cursors.up.isDown && this.cursors.right.isDown) {
+     if (this.keyW.isDown && this.keyD.isDown) {
       this.player.setVelocityY(-300);
       this.player.anims.play("jump");
       this.player.flipX = false;
-    }else if (this.cursors.up.isDown && this.cursors.left.isDown){
+    }else if (this.keyW.isDown && this.keyA.isDown){
       this.player.setVelocity(-300);
       this.player.anims.play("jump");
       this.player.flipX = true;
-    }else if(this.cursors.down.isDown && this.cursors.right.isDown){
+    }else if(this.keyS.isDown && this.keyD.isDown){
       this.player.setVelocityY(300);
       this.player.anims.play("fall");
       this.player.flipX = false;
-    }else if (this.cursors.down.isDown && this.cursors.left.isDown){
+    }else if (this.keyS.isDown && this.keyA.isDown){
       this.player.setVelocityY(300);
       this.player.anims.play("fall");
       this.player.flipX = true;
