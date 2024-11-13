@@ -16,11 +16,10 @@ class Lvl1 extends Phaser.Scene {
     const PlatformWidth = 90; //width of each platform segment
     const ScreenWidth = this.cameras.main.width; // get screen width
     let XPos = 0; //starting position on the x-axis
-    
-    this.Platforms = this.physics.add.staticGroup();//create the platform and set its position
 
     /*loop to create platforms across the entire screen width */
     while (XPos <= ScreenWidth) {
+      this.Platforms = this.physics.add.staticGroup(); //create the platform and set its position
       //alternate between cube1 and cube2
       const PlatformKey = (XPos / PlatformWidth) % 5 === 0 ? "cube1" : "cube2";
       //creates platform; (x, y, cubePattern set prior)
@@ -38,6 +37,10 @@ class Lvl1 extends Phaser.Scene {
       XPos += PlatformWidth;
     }
     
+  }
+
+  getPlatforms(){
+    return this.Platforms;
   }
 };
 

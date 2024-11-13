@@ -1,6 +1,5 @@
 import React, { useRef, useEffect } from "react";
 import Phaser from "phaser";
-import Lvl1 from "./scene";
 import BackGroundScene from "./backGroundScene";
 import Sprites from "./sprite";
 import obstacles from "./obstacles";
@@ -14,7 +13,7 @@ const PhaserGame = () => {
       type: Phaser.AUTO /* tell phaser to choose the best rendering option based on browser's capability; will fall back to Canvas if WebGL not available */,
       width: 900,
       height: 700,
-      backgroundColor: "#3e5f4c",
+      backgroundColor: "blue",
       parent: gameRef.current, //property specifies HTML element to attach the Phaser canvas to
       physics: {
         default: "arcade",
@@ -23,17 +22,21 @@ const PhaserGame = () => {
           gravity: { y: 300 },
         },
       },
+      scale:{
+      
+      },
+      dom: {
+        createContainer: true
+      },
       scene: [
         {
           preload: function () {
-            this.scene.launch("lvl1");
             this.scene.launch("BackgroundScene");
             this.scene.launch("Sprites");
             this.scene.launch("Obstacles");
           },
         },
         BackGroundScene,
-        Lvl1,
         Sprites,
         obstacles
       ],
