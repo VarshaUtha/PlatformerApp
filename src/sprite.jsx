@@ -59,6 +59,7 @@ class Sprites extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
 
     this.physics.add.collider(this.player, this.Platforms);
+    this.body.setOffset(0,0);
 
     this.anims.create({
       key: "idle",

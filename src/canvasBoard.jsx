@@ -18,8 +18,14 @@ const PhaserGame = () => {
       physics: {
         default: "arcade",
         arcade: {
-          debug: true,
+          debug: false,
           gravity: { y: 300 },
+          checkCollision: {
+            up: false,
+            down: false,
+            left: false,
+            right: false,
+          }
         },
       },
       scale:{
