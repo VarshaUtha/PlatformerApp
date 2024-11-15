@@ -18,21 +18,19 @@ const PhaserGame = () => {
       physics: {
         default: "arcade",
         arcade: {
-          debug: false,
+          debug: true,
           gravity: { y: 300 },
           checkCollision: {
-            up: false,
-            down: false,
-            left: false,
-            right: false,
-          }
+            up: true,
+            down: true,
+            left: true,
+            right: true,
+          },
         },
       },
-      scale:{
-      
-      },
+      scale: {},
       dom: {
-        createContainer: true
+        createContainer: true,
       },
       scene: [
         {
@@ -44,7 +42,7 @@ const PhaserGame = () => {
         },
         BackGroundScene,
         Sprites,
-        obstacles
+        obstacles,
       ],
     };
     const game = new Phaser.Game(config); //initializes the game with the specified configuration setting up the rendering context, scenes etc.

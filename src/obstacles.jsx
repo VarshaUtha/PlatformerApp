@@ -4,6 +4,9 @@ class obstacles extends Phaser.Scene {
   constructor() {
     super({ key: "Obstacles" });
     this.obstacle1 = null;
+    this.obstacle2 = null;
+    this.obstacle3 = null;
+    this.obstacle4 = null;
   }
 
   preload() {
