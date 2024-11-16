@@ -11,8 +11,8 @@ const PhaserGame = () => {
   useEffect(() => {
     const config = {
       type: Phaser.AUTO /* tell phaser to choose the best rendering option based on browser's capability; will fall back to Canvas if WebGL not available */,
-      width: 900,
-      height: 700,
+      width: 1000,
+      height: 900,
       backgroundColor: "blue",
       parent: gameRef.current, //property specifies HTML element to attach the Phaser canvas to
       physics: {

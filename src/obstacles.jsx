@@ -11,7 +11,7 @@ class obstacles extends Phaser.Scene {
 
   preload() {
     this.load.spritesheet("fireObs", "src/assets/obstacles/FireObstacle.png", {
-      frameWidth: 100,
+      frameWidth: 50,
       frameHeight: 90,
     });
     this.load.spritesheet(
@@ -19,16 +19,16 @@ class obstacles extends Phaser.Scene {
       "src/assets/obstacles/BonesObstacle.png",
       {
         frameWidth: 150,
-        frameHeight: 110,
+        frameHeight: 90,
       }
     );
   }
 
   create() {
-    this.obstacle1 = this.physics.add.sprite(650, 330, "fireObs");
-    this.obstacle2 = this.physics.add.sprite(250, 575, "fireObs");
+    this.obstacle1 = this.physics.add.sprite(650, 453, "fireObs");
+    this.obstacle2 = this.physics.add.sprite(250, 745, "fireObs");
     this.obstacle3 = this.physics.add.sprite(250, 100, "bonesObs");
-    this.obstacle4 = this.physics.add.sprite(600, 580, "bonesObs");
+    this.obstacle4 = this.physics.add.sprite(600, 752, "bonesObs");
 
     this.obstacle1.setBounce(0.2);
     this.obstacle1.setScale(1);
