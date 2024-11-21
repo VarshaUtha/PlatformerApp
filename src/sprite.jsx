@@ -1,4 +1,5 @@
 import Phaser from "phaser";
+import obstacles from "./obstacles";
 
 class Sprites extends Phaser.Scene {
   constructor() {
@@ -6,6 +7,7 @@ class Sprites extends Phaser.Scene {
     this.player = null;
     this.cursors = null;
     this.Platforms = null;
+    this.obstacleScene = null;
     this.camera = null;
   }
 
@@ -25,6 +27,15 @@ class Sprites extends Phaser.Scene {
       frameWidth: 100,
       frameHeight: 150,
     });
+    this.load.spritesheet("dudeAttack", "src/assets/sprites/playableAttack.PNG", {
+      frameWidth: 120,
+      frameHeight: 150,
+      spacing: 2,
+    });
+    this.load.spritesheet("dudeHurt", "src/assets/sprites/playableHurt.PNG", {
+      frameWidth: 120,
+      frameHeight: 150,
+    });
   }
 
   create() {
@@ -39,7 +50,7 @@ class Sprites extends Phaser.Scene {
 
       //creates platform; (x, y, cubePattern set prior)
       this.Platforms.create(XPos, this.cameras.main.height - 50, PlatformKey)
-        .setOrigin(0, 0.6)
+        .setOrigin(0, 0.5)
         .setImmovable(true)
         .setScale(1)
         .refreshBody();
@@ -48,7 +59,7 @@ class Sprites extends Phaser.Scene {
         .setImmovable(true)
         .setScale(1)
         .refreshBody();
-      this.Platforms.create(XPos - 400, 200, PlatformKey)
+      this.Platforms.create(XPos - 500, 250, PlatformKey)
         .setOrigin(0.5, 0.65)
         .setImmovable(true)
         .setScale(1)
@@ -61,7 +72,7 @@ class Sprites extends Phaser.Scene {
     this.player.body.setGravityY(250);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
-    
+
     this.physics.add.collider(this.player, this.Platforms);
 
     this.anims.create({
@@ -97,15 +108,16 @@ class Sprites extends Phaser.Scene {
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
-  }
-
+    this.keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
+    }
+ 
   update() {
     if (this.keyA.isDown) {
-      this.player.setVelocityX(-180);
+      this.player.setVelocityX(-200);
       this.player.anims.play("runLeft", true);
       this.player.flipX = false;
     } else if (this.keyD.isDown) {
-      this.player.setVelocityX(180);
+      this.player.setVelocityX(200);
       this.player.anims.play("runRight", true);
       this.player.flipX = true;
     } else {
@@ -116,14 +128,15 @@ class Sprites extends Phaser.Scene {
     if (this.keyW.isDown && this.player.body.touching.down) {
       this.player.setVelocityY(-400);
     } else if (this.keyS.isDown && this.keyD.isDown) {
-      this.player.setVelocityY(180);
+      this.player.setVelocityY(200);
       this.player.anims.play("fall");
       this.player.flipX = false;
     } else if (this.keyS.isDown && this.keyA.isDown) {
-      this.player.setVelocityY(180);
+      this.player.setVelocityY(200);
       this.player.anims.play("fall");
       this.player.flipX = true;
     }
   }
+
 }
 export default Sprites;

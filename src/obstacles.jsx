@@ -25,10 +25,10 @@ class obstacles extends Phaser.Scene {
   }
 
   create() {
-    this.obstacle1 = this.physics.add.sprite(650, 453, "fireObs");
-    this.obstacle2 = this.physics.add.sprite(250, 745, "fireObs");
-    this.obstacle3 = this.physics.add.sprite(250, 100, "bonesObs");
-    this.obstacle4 = this.physics.add.sprite(600, 752, "bonesObs");
+    this.obstacle1 = this.physics.add.sprite(680, 460, "fireObs");
+    this.obstacle2 = this.physics.add.sprite(240, 860, "fireObs");
+    this.obstacle3 = this.physics.add.sprite(250, 165, "bonesObs");
+    this.obstacle4 = this.physics.add.sprite(600, 880, "bonesObs");
 
     this.obstacle1.setBounce(0.2);
     this.obstacle1.setScale(1);
