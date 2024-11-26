@@ -2,7 +2,6 @@ import React, { useRef, useEffect } from "react";
 import Phaser from "phaser";
 import BackGroundScene from "./backGroundScene";
 import Sprites from "./sprite";
-import obstacles from "./obstacles";
 
 const PhaserGame = () => {
   const gameRef = useRef(null); //hold the reference for the <div> where Phaser will insert the game canvas
@@ -18,7 +17,7 @@ const PhaserGame = () => {
       physics: {
         default: "arcade",
         arcade: {
-          debug: false,
+          debug: true,
           gravity: { y: 300 },
           checkCollision: {
             up: true,
@@ -37,12 +36,10 @@ const PhaserGame = () => {
           preload: function () {
             this.scene.launch("BackgroundScene");
             this.scene.launch("Sprites");
-            this.scene.launch("Obstacles");
           },
         },
         BackGroundScene,
         Sprites,
-        obstacles,
       ],
     };
     const game = new Phaser.Game(config); //initializes the game with the specified configuration setting up the rendering context, scenes etc.

@@ -1,5 +1,4 @@
 import Phaser from "phaser";
-import obstacles from "./obstacles";
 
 class Sprites extends Phaser.Scene {
   constructor() {
@@ -7,14 +6,21 @@ class Sprites extends Phaser.Scene {
     this.player = null;
     this.cursors = null;
     this.Platforms = null;
-    this.obstacleScene = null;
+    this.obstacles = null;
     this.camera = null;
   }
 
   preload() {
     this.load.image("cube1", "platformCubes/bones.PNG");
     this.load.image("cube2", "platformCubes/nobones.PNG");
-    // Load the running and idle spritesheets
+    this.load.spritesheet("fireObs", "src/assets/obstacles/FireObstacle.png", {
+      frameWidth: 50,
+      frameHeight: 90,
+    });
+    this.load.spritesheet("bonesObs", "src/assets/obstacles/BonesObstacle.png", {
+        frameWidth: 150,
+        frameHeight: 90,
+    });
     this.load.spritesheet("DudeIdle", "src/assets/sprites/playableIdle.PNG", {
       frameWidth: 76.6,
       frameHeight: 150,
@@ -28,13 +34,12 @@ class Sprites extends Phaser.Scene {
       frameHeight: 150,
     });
     this.load.spritesheet("dudeAttack", "src/assets/sprites/playableAttack.PNG", {
-      frameWidth: 120,
+      frameWidth: 132.5,
       frameHeight: 150,
-      spacing: 2,
     });
     this.load.spritesheet("dudeHurt", "src/assets/sprites/playableHurt.PNG", {
-      frameWidth: 120,
-      frameHeight: 150,
+      frameWidth: 110,
+      frameHeight: 150
     });
   }
 
@@ -68,13 +73,40 @@ class Sprites extends Phaser.Scene {
       XPos += PlatformWidth;
     }
 
+    this.obstacle1 = this.physics.add.sprite(680, 470, "fireObs");
+    this.obstacle2 = this.physics.add.sprite(240, 870, "fireObs");
+    this.obstacle3 = this.physics.add.sprite(250, 165, "bonesObs");
+    this.obstacle4 = this.physics.add.sprite(600, 880, "bonesObs");
+
+    this.obstacles = [this.obstacle1, this.obstacle2, this.obstacle3, this.obstacle4];
+    this.obstacleGroup = this.physics.add.group();
+    this.obstacles.forEach((obstacles) => {
+      obstacles.setBounce(0.2);
+      obstacles.setImmovable(true);
+      obstacles.setCollideWorldBounds(true);
+      obstacles.setScale(0.85);
+      obstacles.body.setAllowGravity(false);
+    });
+
     this.player = this.physics.add.sprite(100, 450, "DudeIdle"); //sets character to spawn at start at the given x, y coordinates
     this.player.body.setGravityY(250);
     this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(true);
+    this.player.setCollideWorldBounds(false);
 
-    this.physics.add.collider(this.player, this.Platforms);
-
+    //ObstacleAnimations
+    this.anims.create({
+      key: "fire",
+      frames: this.anims.generateFrameNumbers("fireObs", { start: 0, end: 4 }),
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "bones",
+      frames: this.anims.generateFrameNumbers("bonesObs", {start: 0, end: 9}),
+      frameRate: 8,
+      repeat: -1,
+    });
+    //CharacterAnimations
     this.anims.create({
       key: "idle",
       frames: this.anims.generateFrameNumbers("DudeIdle", { start: 0, end: 4 }),
@@ -94,22 +126,41 @@ class Sprites extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
-      key: "jump",
-      frames: [{ key: "dudeJump", frame: 2 }],
-      frameRate: 20,
-    });
-    this.anims.create({
       key: "fall",
       frames: [{ key: "dudeJump", frame: 0 }],
       frameRate: 20,
     });
+    this.anims.create({
+      key: "attack",
+      frames: this.anims.generateFrameNumbers("dudeAttack", {start: 0, end: 3}),
+      frameRate: 8,
+      repeat: -1,
+    });
+    this.anims.create({
+      key: "hurt",
+      frames: this.anims.generateFrameNumbers("dudeHurt", {start: 0, end: 5}),
+      frameRate: 8,
+      repeat: 1
+    });
+
+    this.obstacle1.anims.play("fire", true);
+    this.obstacle2.anims.play("fire", true);
+    this.obstacle3.anims.play("bones", true);
+    this.obstacle4.anims.play("bones", true);
+
+    this.physics.add.collider(this.player, this.Platforms);
+    this.physics.add.collider(this.player, this.obstacles, (player, obstacles) => {
+      player.anims.play("hurt");
+      console.log("Player was hurt.");
+    })
 
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
     this.keyW = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
-    }
+
+  }
  
   update() {
     if (this.keyA.isDown) {
@@ -126,17 +177,21 @@ class Sprites extends Phaser.Scene {
     }
 
     if (this.keyW.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-400);
+      this.player.setVelocityY(-750);
     } else if (this.keyS.isDown && this.keyD.isDown) {
-      this.player.setVelocityY(200);
+      this.player.setVelocityY(600);
       this.player.anims.play("fall");
       this.player.flipX = false;
     } else if (this.keyS.isDown && this.keyA.isDown) {
-      this.player.setVelocityY(200);
+      this.player.setVelocityY(600);
       this.player.anims.play("fall");
       this.player.flipX = true;
     }
-  }
 
+    if (this.keyJ.isDown){
+      this.player.anims.play("attack", true);
+    }
+  }
 }
+
 export default Sprites;
