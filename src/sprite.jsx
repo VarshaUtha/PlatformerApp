@@ -162,6 +162,10 @@ class Sprites extends Phaser.Scene {
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
+    this.cameras.main.setBounds(0, 0, 1920 * 2, 1080 *2);
+    this.physics.world.setBounds(0, 0 , 1920 * 2, 1080 *2);
+    this.cameras.main.startFollow(this.player, true);
+    
   }
  
   update() {
