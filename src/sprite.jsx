@@ -11,8 +11,8 @@ class Sprites extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("cube1", "platformCubes/bones.PNG");
-    this.load.image("cube2", "platformCubes/nobones.PNG");
+    this.load.image("cube1", "src/assets/platformCubes/bones.PNG");
+    this.load.image("cube2", "src/assets/platformCubes/nobones.PNG");
     this.load.spritesheet("fireObs", "src/assets/obstacles/FireObstacle.png", {
       frameWidth: 50,
       frameHeight: 90,
@@ -91,7 +91,7 @@ class Sprites extends Phaser.Scene {
     this.player = this.physics.add.sprite(100, 450, "DudeIdle"); //sets character to spawn at start at the given x, y coordinates
     this.player.body.setGravityY(250);
     this.player.setBounce(0.2);
-    this.player.setCollideWorldBounds(false);
+    this.player.setCollideWorldBounds(true);
 
     //ObstacleAnimations
     this.anims.create({
@@ -140,7 +140,7 @@ class Sprites extends Phaser.Scene {
       key: "hurt",
       frames: this.anims.generateFrameNumbers("dudeHurt", {start: 0, end: 5}),
       frameRate: 8,
-      repeat: 1
+      repeat: 2
     });
 
     this.obstacle1.anims.play("fire", true);
@@ -150,9 +150,11 @@ class Sprites extends Phaser.Scene {
 
     this.physics.add.collider(this.player, this.Platforms);
     this.physics.add.collider(this.player, this.obstacles, (player, obstacles) => {
-      player.anims.play("hurt");
-      console.log("Player was hurt.");
-    })
+          player.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
+            player.anims.play("hurt");
+        });
+        console.log("Player was hurt.");
+    });
 
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this.keyD = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
@@ -176,8 +178,11 @@ class Sprites extends Phaser.Scene {
       this.player.anims.play("idle", true);
     }
 
-    if (this.keyW.isDown && this.player.body.touching.down) {
-      this.player.setVelocityY(-750);
+    var canDoubleJump = this.player.jumpCount > 2;
+
+    if (this.keyW.isDown && this.player.body.touching.down || canDoubleJump) {
+      this.player.jumpCount++;
+      this.player.setVelocityY(-600);
     } else if (this.keyS.isDown && this.keyD.isDown) {
       this.player.setVelocityY(600);
       this.player.anims.play("fall");
@@ -189,7 +194,8 @@ class Sprites extends Phaser.Scene {
     }
 
     if (this.keyJ.isDown){
-      this.player.anims.play("attack", true);
+      this.player.setVelocityX(50);
+      this.player.anims.play("hurt", true);
     }
   }
 }
