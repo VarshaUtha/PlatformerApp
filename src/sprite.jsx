@@ -8,11 +8,17 @@ class Sprites extends Phaser.Scene {
     this.Platforms = null;
     this.obstacles = null;
     this.camera = null;
+    this.jumpCount = 0;
   }
 
   preload() {
     this.load.image("cube1", "src/assets/platformCubes/bones.PNG");
     this.load.image("cube2", "src/assets/platformCubes/nobones.PNG");
+    this.load.image("endLevel", "src/assets/obstacles/NextLevelPole.PNG");
+    this.load.spritesheet("enemy1", "src/assets/sprites/Enemy2Idle.png", {
+      frameWidth: 150,
+      frameHeight: 150
+    });
     this.load.spritesheet("fireObs", "src/assets/obstacles/FireObstacle.png", {
       frameWidth: 50,
       frameHeight: 90,
@@ -45,7 +51,8 @@ class Sprites extends Phaser.Scene {
 
   create() {
     const PlatformWidth = 100; //width of each platform segment
-    const ScreenWidth = this.cameras.main.width; // get screen width
+    const ScreenWidth = 1920 * 2; // get screen width
+
     let XPos = 0; //starting position on the x-axis
     this.Platforms = this.physics.add.staticGroup(); //create the platform and set its position
     /*loop to create platforms across the entire screen width */
@@ -59,26 +66,38 @@ class Sprites extends Phaser.Scene {
         .setImmovable(true)
         .setScale(1)
         .refreshBody();
-      this.Platforms.create(XPos + 400, 500, PlatformKey)
-        .setOrigin(0, 0)
-        .setImmovable(true)
-        .setScale(1)
-        .refreshBody();
-      this.Platforms.create(XPos - 500, 250, PlatformKey)
-        .setOrigin(0.5, 0.65)
-        .setImmovable(true)
-        .setScale(1)
-        .refreshBody();
-      //move the xpos by the width of the platform
       XPos += PlatformWidth;
     }
 
-    this.obstacle1 = this.physics.add.sprite(680, 470, "fireObs");
-    this.obstacle2 = this.physics.add.sprite(240, 870, "fireObs");
-    this.obstacle3 = this.physics.add.sprite(250, 165, "bonesObs");
-    this.obstacle4 = this.physics.add.sprite(600, 880, "bonesObs");
+    let TopXPos = 0;
+    while (TopXPos <= ScreenWidth/4){
+      const TopPlatformKey = (TopXPos / PlatformWidth) % 5 === 0 ? "cube1" : "cube2";
+      this.Platforms.create(TopXPos + 500, this.cameras.main.height - 550, TopPlatformKey).setImmovable(true).refreshBody();
+      TopXPos += PlatformWidth;
+    }
 
-    this.obstacles = [this.obstacle1, this.obstacle2, this.obstacle3, this.obstacle4];
+
+    this.endLevelPole = this.physics.add.sprite(1900*2, 500, "endLevel").setCollideWorldBounds(true).refreshBody();
+
+
+    this.obstacle1 = this.physics.add.sprite(780, 370, "fireObs");
+    this.obstacle2 = this.physics.add.sprite(2600, 870, "fireObs");
+    this.obstacle3 = this.physics.add.sprite(1600, 870, "bonesObs");
+    this.obstacle4 = this.physics.add.sprite(600, 880, "bonesObs");
+    this.enemy1 = this.physics.add.sprite(1200, 200, "enemy1");
+    this.enemy2 = this.physics.add.sprite(3000, 500, "enemy1");
+    
+    this.enemy = [this.enemy1, this.enemy2];
+    this.enemyGroup = this.physics.add.group();
+    this.enemy.forEach((enemies) => {
+      enemies.setBounce(0.2);
+      enemies.setImmovable(true);
+      enemies.setCollideWorldBounds(true);
+      enemies.setScale(1);
+      enemies.body.setAllowGravity(false);
+    });
+
+    this.obstacles = [this.obstacle1, this.obstacle2,this.obstacle3, this.obstacle4];
     this.obstacleGroup = this.physics.add.group();
     this.obstacles.forEach((obstacles) => {
       obstacles.setBounce(0.2);
@@ -89,9 +108,10 @@ class Sprites extends Phaser.Scene {
     });
 
     this.player = this.physics.add.sprite(100, 450, "DudeIdle"); //sets character to spawn at start at the given x, y coordinates
-    this.player.body.setGravityY(250);
+    this.player.body.setGravityY(300);
     this.player.setBounce(0.2);
     this.player.setCollideWorldBounds(true);
+    this.player.jumpCount = 0;
 
     //ObstacleAnimations
     this.anims.create({
@@ -126,6 +146,12 @@ class Sprites extends Phaser.Scene {
       repeat: -1,
     });
     this.anims.create({
+      key: "enemy1_idle",
+      frames: this.anims.generateFrameNumbers("enemy1", {start: 0, end: 3}),
+      frameRate: 8,
+      repeat: -1
+    });
+    this.anims.create({
       key: "fall",
       frames: [{ key: "dudeJump", frame: 0 }],
       frameRate: 20,
@@ -140,20 +166,28 @@ class Sprites extends Phaser.Scene {
       key: "hurt",
       frames: this.anims.generateFrameNumbers("dudeHurt", {start: 0, end: 5}),
       frameRate: 8,
-      repeat: 2
+      repeat: -1
     });
 
     this.obstacle1.anims.play("fire", true);
     this.obstacle2.anims.play("fire", true);
     this.obstacle3.anims.play("bones", true);
     this.obstacle4.anims.play("bones", true);
+    this.enemy1.anims.play("enemy1_idle", true);
+    this.enemy2.anims.play("enemy1_idle", true);
 
+
+    this.physics.add.collider(this.Platforms, this.endLevelPole);
     this.physics.add.collider(this.player, this.Platforms);
-    this.physics.add.collider(this.player, this.obstacles, (player, obstacles) => {
-          player.once(Phaser.Animations.Events.SPRITE_ANIMATION_COMPLETE, () => {
-            player.anims.play("hurt");
-        });
-        console.log("Player was hurt.");
+    this.physics.add.collider(this.player, this.endLevelPole, (player, endLevelPole) => {
+      player.anims.play("celebrate");
+    });
+    this.physics.add.collider(this.player, this.obstacles, (player, obstacle) => {
+      
+          player.play("hurt");
+          player.setVelocityX(-30);
+          console.log("player had been hurt");
+              
     });
 
     this.keyA = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
@@ -162,19 +196,18 @@ class Sprites extends Phaser.Scene {
     this.keyS = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.S);
     this.keyJ = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.J);
 
-    this.cameras.main.setBounds(0, 0, 1920 * 2, 1080 *2);
-    this.physics.world.setBounds(0, 0 , 1920 * 2, 1080 *2);
+    this.cameras.main.setBounds(0, 0, 1920 * 2, 1000);
+    this.physics.world.setBounds(0, 0, 1920 * 2, 1000);
     this.cameras.main.startFollow(this.player, true);
-    
   }
  
   update() {
     if (this.keyA.isDown) {
-      this.player.setVelocityX(-200);
+      this.player.setVelocityX(-300);
       this.player.anims.play("runLeft", true);
       this.player.flipX = false;
     } else if (this.keyD.isDown) {
-      this.player.setVelocityX(200);
+      this.player.setVelocityX(300);
       this.player.anims.play("runRight", true);
       this.player.flipX = true;
     } else {
@@ -182,12 +215,19 @@ class Sprites extends Phaser.Scene {
       this.player.anims.play("idle", true);
     }
 
-    var canDoubleJump = this.player.jumpCount > 2;
+    const isJumpJustDown = Phaser.Input.Keyboard.JustDown(this.keyW);
 
-    if (this.keyW.isDown && this.player.body.touching.down || canDoubleJump) {
-      this.player.jumpCount++;
+    if (isJumpJustDown && (this.player.body.touching.down || this.jumpCount < 2)) {
       this.player.setVelocityY(-600);
-    } else if (this.keyS.isDown && this.keyD.isDown) {
+      ++this.jumpCount;
+      console.log(this.player.jumpCount);
+    }
+
+    if(this.player.body.touching.down && !isJumpJustDown){
+      this.jumpCount = 0;
+    }
+
+    if (this.keyS.isDown && this.keyD.isDown) {
       this.player.setVelocityY(600);
       this.player.anims.play("fall");
       this.player.flipX = false;
@@ -199,7 +239,7 @@ class Sprites extends Phaser.Scene {
 
     if (this.keyJ.isDown){
       this.player.setVelocityX(50);
-      this.player.anims.play("hurt", true);
+      this.player.anims.play("attack", true);
     }
   }
 }
