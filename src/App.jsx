@@ -6,7 +6,7 @@ function App() {
 
   return (
     <div className="App">
-      <h2>Looking For You(revisit)</h2>
+      <h2>2D Platformer</h2>
       <PhaserGame />
     </div>
   );

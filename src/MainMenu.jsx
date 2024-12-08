@@ -1,18 +1,15 @@
-import {Scene} from 'phaser';
+import { Scene } from "phaser";
 
-export class MainMenu extends Scene{
-    constructor(){
-        super({key:'MainMenu'});
-    }
+export class MainMenu extends Scene {
+  constructor() {
+    super({ key: "MainMenu" });
+  }
 
-    preload(){
-        
-    }
+  preload() {}
 
-    create(){
-        this.add.image();
-        this.logo = this.add.image().setDepth(100);
-        this.add.text()
-    }
-
+  create() {
+    this.add.image();
+    this.logo = this.add.image().setDepth(100);
+    this.add.text();
+  }
 }
